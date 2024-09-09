@@ -8,5 +8,5 @@
 - bool - логический тип данных, используется для хранения значений булева типа, т.е. тех, что могут принимать значения "истина" или "ложь". Размер памяти: 1 байт
 - void - тип данных, обозначающий "пустоту", или "отсутствие какого-то значения" Размер памяти: 0 байт
 
-[Помощь с типами](https://en.cppreference.com/w/cpp/language/types)
+[Помощь с типами](https://en.cppreference.com/w/cpp/language/types) <br>
 [Шпаргалка по MD](https://github.com/sandino/Markdown-Cheatsheet/blob/master/README.md#images)
