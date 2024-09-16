@@ -8,7 +8,7 @@
     * Знаковые: int, short, long, long long
     * Беззнаковые: unsigned int, unsigned short, unsigned long, unsigned long long
 * Вещественные типы: float, double, long double
-* Символьные типы: char, wchar_t, char16_t, char32_t
+* Символьные типы: char
 * Логический тип: bool
 
 ### 3. Размеры типов данных в байтах
