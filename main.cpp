@@ -29,10 +29,6 @@ cout << "Data Type  : float\n"
 	<< "----------------------------\n";
 
 cout << "OPERATIONS" << endl;
-#include <iostream>
-
-using namespace std;
-
 int a {120}; 
 int b {23};
 cout << "a = " << a << ", b = " << b << ", a % b = " << a % b << endl;  // 12
