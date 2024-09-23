@@ -45,9 +45,6 @@
 | double                  | 2.22507e-308  | 1.79769e+308   |
 | long double             | 3.3621e-4932  | 1.18973e+4932  |
 | char                    | -128          | 127            |
-| wchar_t                 | 0             | 65535          |
-| char16_t                | 0             | 65535          |
-| char32_t                | 0             | 4294967295     |
 | bool                    | false         | true           |
 
 [Помощь с типами](https://en.cppreference.com/w/cpp/language/types) <br>
