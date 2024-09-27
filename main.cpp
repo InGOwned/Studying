@@ -4,6 +4,6 @@ using namespace std;
 
 int main()
 {
-	std::cout << "Hello, 1 FIIT and 1 MO!" << std::endl;
+	cout << "Hello, 1 FIIT and 1 MO!" << endl;
 	return 0;
 }
