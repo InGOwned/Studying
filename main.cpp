@@ -3,14 +3,12 @@
 using namespace std;
 
 int main() {
-    int x = 0b101001010111;
+    int x = 0b101001101;
     int bit_value = 0;
     int position;
 
 	cout << "Enter position: ";
 	cin >> position;
-
-    cout << "\nx = " << x << endl;
 
     if ((x & (1u << position)) != 0) {
         bit_value = 1;
