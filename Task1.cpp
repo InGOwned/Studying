@@ -12,7 +12,7 @@ int main()
     int arr[n] {}; 
  
     for (int i = 0; i < n; i++) { 
-        cout << "¬ведите число: ";
+        cout << "Enter a number: ";
         cin >> arr[i];
     } 
  

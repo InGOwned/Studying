@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {   
-    setlocale(LC_ALL, "rus"); 
+    // setlocale(LC_ALL, "rus"); 
 
     cout << "TASK 2" << endl;
 
@@ -12,7 +12,7 @@ int main()
     int arr[n] {}; 
  
     for (int i = 0; i < n; i++) { 
-        cout << "¬ведите число: ";
+        cout << "Enter a number: ";
         cin >> arr[i];
     } 
 
@@ -22,22 +22,76 @@ int main()
         { 
             int number1 = arr[i];
             int number2 = arr[j];
+
+            int first_digit1 = number1; 
+            int first_digit2 = number2;
+
+            int max_digit1 = number1;
+            int max_digit2 = number2;
+
+            int digit1 = 0;
+            int digit2 = 0;
+
+            while (max_digit1) {
+                if (max_digit1 % 10 > digit1) 
+                    digit1 = max_digit1 % 10;
+
+                max_digit1 /= 10;
+            }
+            max_digit1 = digit1;
+
+            while (max_digit2) {
+                if (max_digit2 % 10 > digit2) 
+                    digit2 = max_digit2 % 10;
+
+                max_digit2 /= 10;
+            }
+            max_digit2 = digit2;
+
+
             int temp;
 
-            while (number1 >= 10) 
-                number1 /= 10;
+            while (first_digit1 >= 10) 
+                first_digit1 /= 10;
             
-            while (number2 >= 10) 
-                number2 /= 10;
+            while (first_digit2 >= 10) 
+                first_digit2 /= 10;
+            
     
 
-            if (number1 > number2) 
-            { 
+            if (first_digit1 > first_digit2) 
+            {
                 temp = arr[j]; 
                 arr[j] = arr[i]; 
                 arr[i] = temp; 
-            } 
-        } 
+            } else if (first_digit1 == first_digit2) {
+                if (max_digit1 > max_digit2) 
+                {
+                    temp = arr[j]; 
+                    arr[j] = arr[i]; 
+                    arr[i] = temp; 
+                } else if (max_digit1 < max_digit2) {
+                    temp = arr[i]; 
+                    arr[i] = arr[j]; 
+                    arr[j] = temp;
+                } else {
+                    if (number1 >= number2)
+                    {
+                        temp = arr[j]; 
+                        arr[j] = arr[i]; 
+                        arr[i] = temp;
+                    } else {
+                        temp = arr[i]; 
+                        arr[i] = arr[j]; 
+                        arr[j] = temp;
+                    }
+                }
+            } else {
+                temp = arr[i]; 
+                arr[i] = arr[j]; 
+                arr[j] = temp; 
+            }
+        }
     } 
     
     for (int i = 0; i < n; ++i) 
