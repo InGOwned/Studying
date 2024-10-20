@@ -2,6 +2,11 @@
 
 using namespace std;
 
+int getFirstDigit(int n);
+int getMaxDigit(int n);
+void swap(int &a, int &b);
+
+
 int main()
 {   
     // setlocale(LC_ALL, "rus"); 
@@ -23,79 +28,60 @@ int main()
             int number1 = arr[i];
             int number2 = arr[j];
 
-            int first_digit1 = number1; 
-            int first_digit2 = number2;
+            int first_digit1 = getFirstDigit(arr[i]);
+            int first_digit2 = getFirstDigit(arr[j]);
 
-            int max_digit1 = number1;
-            int max_digit2 = number2;
-
-            int digit1 = 0;
-            int digit2 = 0;
-
-            while (max_digit1) {
-                if (max_digit1 % 10 > digit1) 
-                    digit1 = max_digit1 % 10;
-
-                max_digit1 /= 10;
-            }
-            max_digit1 = digit1;
-
-            while (max_digit2) {
-                if (max_digit2 % 10 > digit2) 
-                    digit2 = max_digit2 % 10;
-
-                max_digit2 /= 10;
-            }
-            max_digit2 = digit2;
-
-
-            int temp;
-
-            while (first_digit1 >= 10) 
-                first_digit1 /= 10;
+            int max_digit1 = getMaxDigit(arr[i]);
+            int max_digit2 = getMaxDigit(arr[j]);
             
-            while (first_digit2 >= 10) 
-                first_digit2 /= 10;
-            
-    
-
             if (first_digit1 > first_digit2) 
             {
-                temp = arr[j]; 
-                arr[j] = arr[i]; 
-                arr[i] = temp; 
+                swap(arr[i], arr[j]);
             } else if (first_digit1 == first_digit2) {
                 if (max_digit1 > max_digit2) 
                 {
-                    temp = arr[j]; 
-                    arr[j] = arr[i]; 
-                    arr[i] = temp; 
-                } else if (max_digit1 < max_digit2) {
-                    temp = arr[i]; 
-                    arr[i] = arr[j]; 
-                    arr[j] = temp;
-                } else {
-                    if (number1 >= number2)
-                    {
-                        temp = arr[j]; 
-                        arr[j] = arr[i]; 
-                        arr[i] = temp;
-                    } else {
-                        temp = arr[i]; 
-                        arr[i] = arr[j]; 
-                        arr[j] = temp;
+                swap(arr[i], arr[j]);
+                } else if (max_digit1 == max_digit2) {
+                    if (number1 > number2) {
+                        swap(arr[i], arr[j]);
                     }
                 }
-            } else {
-                temp = arr[i]; 
-                arr[i] = arr[j]; 
-                arr[j] = temp; 
             }
         }
     } 
     
-    for (int i = 0; i < n; ++i) 
+    for (int i = 0; i < n; i++) 
             cout << arr[i] << " ";
 
     return 0;
+}
+
+
+int getMaxDigit(int n) 
+{   
+    int max_digit = 0;
+    while (n) 
+    {
+        if (n % 10 > max_digit) 
+            max_digit = n % 10;
+
+        n /= 10;
+    }
+    return max_digit;
+}
+
+
+int getFirstDigit(int n) 
+{
+    while (n >= 10) 
+        n /= 10;
+    
+    return n;  
+}
+
+void swap(int &a, int &b) {
+    int temp = a;
+    a = b;
+    b = temp;
+    return;
 }
