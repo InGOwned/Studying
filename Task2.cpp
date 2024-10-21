@@ -8,9 +8,7 @@ void swap(int &a, int &b);
 
 
 int main()
-{   
-    // setlocale(LC_ALL, "rus"); 
-
+{ 
     cout << "TASK 2" << endl;
 
     const int n = 5; 
