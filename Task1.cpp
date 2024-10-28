@@ -16,8 +16,6 @@ int main()
         cin >> arr[i];
     } 
  
-    // Сортируем  
- 
     // for (int i = 0; i < n - 1; ++i) 
     // { 
     //     for (int j = i + 1; j < n; ++j) 
@@ -33,7 +31,6 @@ int main()
 
     bool flag = false; 
 
-    // Проверка условия
     for (int i = 0; i < n; ++i) 
     { 
         int sum = 0;
