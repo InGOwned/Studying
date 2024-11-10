@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {   
-    cout << "TASK 2" << endl;
+    cout << "TASK 3" << endl;
 
     int n, m;
     cout << "Enter the dimensions of matrix, n and m: ";
