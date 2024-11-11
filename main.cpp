@@ -1,6 +1,7 @@
 #include <iostream>
 #include <climits> 
 #include <iomanip>
+#include <func.hpp>
 
 using namespace std;
 
