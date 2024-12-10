@@ -3,8 +3,7 @@
 
 using namespace std;
 
-
-int main () 
+int main()
 {
     float q1, p1, q2, p2;
     int a, cost = 0;
@@ -13,37 +12,25 @@ int main ()
     cin >> q2 >> p2;
     cin >> a;
 
-    if ((q1 / p1) > (q2 / p2)) 
+    bool useFirst = (q1 / p1) > (q2 / p2);
+
+    if (useFirst)
     {
-        while (a  > q1)
+        while (a > q1)
         {
             a -= q1;
             cost += p1;
         }
-        if (p1 > (ceil(a / q2) * p2))
-        {
-            cost += ceil(a / q2) * p2;
-        }
-        else 
-        {
-            cost += p1;
-        }
+        cost += (p1 < (ceil(a / q2) * p2)) ? p1 : ceil(a / q2) * p2;
     }
-    else 
+    else
     {
-        while (a  > q2)
+        while (a > q2)
         {
             a -= q2;
             cost += p2;
         }
-        if (p2 > (ceil(a / q1) * p1))
-        {
-            cost += ceil(a / q1) * p1;
-        }
-        else 
-        {
-            cost += p2;
-        }
+        cost += (p2 < (ceil(a / q1) * p1)) ? p2 : ceil(a / q1) * p1;
     }
 
     cout << cost;
