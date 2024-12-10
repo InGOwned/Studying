@@ -56,7 +56,6 @@ int main() {
     return 0;
 }
 
-// Функция для проверки, состоит ли слово из букв заданного слова + одна любая буква
 bool check_word(const string& word, const string& given_word) {
     string sorted_word = word;
     string sorted_given_word = given_word;
