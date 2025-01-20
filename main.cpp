@@ -71,8 +71,6 @@ int main() {
     }
 
     Print(sent);
-
-    return 0;
 }
 
 
@@ -117,7 +115,7 @@ void Sort(Node* sent) {
             }
             p = p->right;
         }
-        last = p; // Перемещаем last
+        last = p;
     } while (swapped);
 }
 
@@ -148,27 +146,27 @@ bool isPrime(int n) {
 }
 
 bool IsAllDigitsOdd(int number) {
-    if (number == 0) return false; // 0 считается чётным
+    if (number == 0) return false;
 
     while (number != 0) {
-        int digit = number % 10; // Получаем последнюю цифру
-        if (digit % 2 == 0) {    // Если цифра чётная
+        int digit = number % 10; 
+        if (digit % 2 == 0) {  
             return false;
         }
-        number /= 10; // Убираем последнюю цифру
+        number /= 10;
     }
     return true; 
 }
 
 bool IsAllDigitsEven(int number) {
-    if (number == 0) return true; // 0 считается чётным
+    if (number == 0) return true;
 
     while (number != 0) {
-        int digit = number % 10; // Получаем последнюю цифру
-        if (digit % 2 != 0) {    // Если цифра нечётная
+        int digit = number % 10;
+        if (digit % 2 != 0) { 
             return false;
         }
-        number /= 10; // Убираем последнюю цифру
+        number /= 10;
     }
     return true; 
 }
