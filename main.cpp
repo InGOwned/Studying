@@ -16,6 +16,7 @@ void Remove(Node* sent);
 void Sort(Node* sent);
 void SwapData(Node* a, Node* b);
 void Duplicate(Node* node);
+void clearMemory(Node* sent);
 
 bool isPrime(int n);
 bool IsAllDigitsOdd(int n);
@@ -71,6 +72,8 @@ int main() {
     }
 
     Print(sent);
+    clearMemory(sent);
+    delete sent;
 }
 
 
@@ -133,6 +136,15 @@ void Duplicate(Node* node) {
     node->right->left = newNode;
     node->right = newNode;
 }
+
+void clearMemory(Node* sent) {
+        Node* p = sent->right;
+        while (p != sent) {
+            Node* tmp = p;
+            p = p->right;
+            delete tmp;
+        }
+    }
 
 bool isPrime(int n) {
     for (int i = 2; i < n*0.5 + 1; i++)
