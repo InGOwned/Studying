@@ -11,17 +11,17 @@ void Search(int i, int j, int step, int n, int m,
     if(field[i][j] == 'E')
         return;
 
-    if(i + 1 < n && field[i+1][j] != '#')
-        Search(i+1,j,step+1,n,m,field,table);
+    if(i + 1 < n && field[i+1][j] != '#')   
+        Search(i+1, j, step+1, n, m, field, table);
 
     if(i - 1 >= 0 && field[i-1][j] != '#')
-        Search(i-1,j,step+1,n,m,field,table);
+        Search(i-1, j, step+1, n, m, field, table);
 
     if(j + 1 < m && field[i][j + 1] != '#')
-        Search(i,j+1,step+1,n,m,field,table);
+        Search(i, j+1, step+1, n, m, field, table);
         
     if(j - 1 >= 0 && field[i][j - 1] != '#')
-        Search(i,j-1,step+1,n,m,field,table);
+        Search(i, j-1, step+1, n, m, field, table);
 
 
 
