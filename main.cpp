@@ -19,21 +19,35 @@ class BigInt {
         m_size = len;
     }
 
-      BigInt& operator+=(const BigInt& other) {
-      for(int i = 0; i <  std::max(m_size, other.m_size); i++) {
-          m_value[i] += other.m_value[i];
-          if(m_value[i] > 9) { // Переносим 1 в следующий разряд
-              m_value[i] -= 10;
-              m_value[i+1]++;
-              if(i+1 == m_size) m_size++;
-          }
-      }
-      return *this;
-  }
+    BigInt& operator+=(const BigInt& other) {
+    int carry = 0;
+    int max_size = std::max(m_size, other.m_size);
+
+    for (int i = 0; i < max_size || carry; ++i) {
+
+        unsigned char a = (i < m_size) ? m_value[i] : 0;
+        unsigned char b = (i < other.m_size) ? other.m_value[i] : 0;
+        
+        int sum = a + b + carry;
+        carry = sum / 10;
+        m_value[i] = sum % 10;
+
+        if (i >= m_size)
+            m_size = i + 1;
+
+    }
+
+    if (carry) {
+        m_value[m_size] = carry;
+        m_size++;
+    }
+
+    return *this;
+}
 
     BigInt operator+(const BigInt& other){
         BigInt result(*this);
-        result += other;
+        result += other;    
         return result;
     }
 
