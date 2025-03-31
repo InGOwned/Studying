@@ -1,181 +1,183 @@
-
 #include <iostream>
-#define N_Max 1000
 
-class BigInt {
-    unsigned char m_value[1000];
-    short m_size = 0;
+class MyVector {
+    int* m_arr;
+    size_t m_size;
+    size_t m_cap;
 
-    public:
-    BigInt() = default;
-    
-    BigInt(const std::string& value) {
-        size_t len = value.length();
-        for(int i=0;i<len;i++)
-            m_value[i] = value[len-i-1] - '0';
-        for(int i=len;i<N_Max;i++) {
-            m_value[i] = 0;
+public:
+    MyVector() : m_arr(nullptr), m_size(0), m_cap(0) {}
+
+    MyVector(size_t size, int value) : m_size(size), m_cap(size) {
+        m_arr = new int[m_cap];
+        for (size_t i = 0; i < m_size; ++i) {
+            m_arr[i] = value;
         }
-        m_size = len;
     }
 
-    BigInt& operator+=(const BigInt& other) {
-    int carry = 0;
-    int max_size = std::max(m_size, other.m_size);
-
-    for (int i = 0; i < max_size || carry; ++i) {
-
-        unsigned char a = (i < m_size) ? m_value[i] : 0;
-        unsigned char b = (i < other.m_size) ? other.m_value[i] : 0;
-        
-        int sum = a + b + carry;
-        carry = sum / 10;
-        m_value[i] = sum % 10;
-
-        if (i >= m_size)
-            m_size = i + 1;
-
+    ~MyVector() {
+        delete[] m_arr;
     }
 
-    if (carry) {
-        m_value[m_size] = carry;
-        m_size++;
-    }
+    void push_back(int value) {
+        if (m_size >= m_cap) {
+            size_t new_cap = m_cap == 0 ? 1 : m_cap * 2;
 
-    return *this;
-}
-
-    BigInt operator+(const BigInt& other){
-        BigInt result(*this);
-        result += other;    
-        return result;
-    }
-
-    BigInt& operator*=(const BigInt& other) {
-        BigInt result;
-        result.m_size = m_size + other.m_size;
-        for (int i = 0; i < result.m_size; ++i)
-            result.m_value[i] = 0;
-
-        for (int i = 0; i < m_size; ++i) {
-            for (int j = 0; j < other.m_size; ++j) {
-                result.m_value[i + j] += m_value[i] * other.m_value[j];
-            }
-        }
-        int carry = 0;
-        for (int i = 0; i < result.m_size; ++i) {
-            int digit = result.m_value[i] + carry;
-            result.m_value[i] = digit % 10;
-            carry = digit / 10;
-        }
-        if (carry) {
-            result.m_value[result.m_size] = carry;
-            result.m_size++;
-        }
-        while (result.m_size > 1 && result.m_value[result.m_size - 1] == 0) {
-            --result.m_size;
-        }
-
-        *this = result;
-        return *this;
-    }
-
-
-    BigInt operator*(const BigInt& other) const {
-        BigInt result(*this);
-        result *= other;
-        return result;
-    }
-
-    bool operator<(const BigInt& other) const {
-        if (m_size < other.m_size)
-            return true;
-        if (m_size > other.m_size) {
-            return false;
-
-        for (int i = m_size - 1; i >= 0; --i) {
-            if (m_value[i] < other.m_value[i])
-                return true;
-            if (m_value[i] > other.m_value[i])
-                return false;
+            int* new_arr = new int[new_cap];
+            
+            for (size_t i = 0; i < m_size; ++i) {
+                new_arr[i] = m_arr[i];
             }
             
-            return false;
+            delete[] m_arr;
+            m_arr = new_arr;
+            m_cap = new_cap;
         }
+        m_arr[m_size++] = value;
     }
 
-    bool operator>(const BigInt& other) const {
-        return other < *this;
-    }
-
-    bool operator==(const BigInt& other) const {
-        if (m_size != other.m_size) {
-            return false;
-        }
-        for (int i = 0; i < m_size; ++i) {
-            if (m_value[i] != other.m_value[i]) {
-                return false;
+    void resize(size_t newSize, int value = 0) {
+        if (newSize > m_size) {
+            reserve(newSize);
+            for (size_t i = m_size; i < newSize; ++i) {
+                m_arr[i] = value;
             }
         }
-        return true;
+        m_size = newSize;
     }
 
-    bool operator!=(const BigInt& other) const {
-        return !(*this == other);
+    void reserve(size_t new_cap) {
+        if (new_cap <= m_cap) return;
+        
+        int* new_arr = new int[new_cap];
+        for (size_t i = 0; i < m_size; ++i) {
+            new_arr[i] = m_arr[i];
+        }
+        delete[] m_arr;
+        m_arr = new_arr;
+        m_cap = new_cap;
     }
 
+    void shrink_to_fit() {
+        if (m_size == m_cap) return;
+        
+        int* new_arr = new int[m_size];
+        for (size_t i = 0; i < m_size; ++i) {
+            new_arr[i] = m_arr[i];
+        }
+        delete[] m_arr;
+        m_arr = new_arr;
+        m_cap = m_size;
+    }
 
-    friend std::ostream& operator<<(std::ostream& out, const BigInt& other);
+    void insert(size_t index, int value) {
+        if (index > m_size) throw std::out_of_range("Index out of range");
+        
+        push_back(value);
+        for (size_t i = m_size - 1; i > index; --i) {
+            m_arr[i] = m_arr[i - 1];
+        }
+        m_arr[index] = value;
+    }
+
+    void erase(size_t index) {
+        if (index >= m_size) throw std::out_of_range("Index out of range");
+        
+        for (size_t i = index; i < m_size - 1; ++i) {
+            m_arr[i] = m_arr[i + 1];
+        }
+        --m_size;
+    }
+
+    int& operator[](size_t index) {
+        return m_arr[index];
+    }
+
+    const int& operator[](size_t index) const {
+        return m_arr[index];
+    }
+
+    int& at(size_t index) {
+        if (index >= m_size) throw std::out_of_range("Index out of range");
+        return m_arr[index];
+    }
+
+    const int& at(size_t index) const {
+        if (index >= m_size) throw std::out_of_range("Index out of range");
+        return m_arr[index];
+    }
+
+    int& front() {
+        return m_arr[0];
+    }
+
+    const int& front() const {
+        return m_arr[0];
+    }
+
+    int& back() {
+        return m_arr[m_size - 1];
+    }
+
+    const int& back() const {
+        return m_arr[m_size - 1];
+    }
+
+    bool empty() const {
+        return m_size == 0;
+    }
+
+    size_t size() const {
+        return m_size;
+    }
+
+    size_t capacity() const {
+        return m_cap;
+    }
+
+    MyVector(const MyVector&) = delete;
+    MyVector& operator=(const MyVector&) = delete;
 };
 
-std::istream& operator>>(std::istream& in, BigInt& other) { // Ввод
-    std::string s;
-    in >> s;
-    other = BigInt(s);
-    return in;
-}
-
-std::ostream& operator<<(std::ostream& out, const BigInt& other) { // Вывод
-    for(int i=0; i<other.m_size; i++) {
-        out << static_cast<short>(other.m_value[other.m_size - i - 1]);
-    }
-    return out;
-}
-
 int main() {
-    BigInt x;
-    std::cin >> x;
-    BigInt y;
-    std::cin >> y;
+    try {
+        MyVector vec;
+        
+        for (int i = 0; i < 10; ++i) {
+            vec.push_back(i);
+            std::cout << "Added " << i << ": size=" << vec.size() 
+                      << " capacity=" << vec.capacity() << std::endl;
+        }
 
-    std::cout << "x = " << x << std::endl;
-    std::cout << "y = " << y << std::endl;
+        vec.insert(5, 99);
+        std::cout << "\nAfter insert at 5: ";
+        for (size_t i = 0; i < vec.size(); ++i) {
+            std::cout << vec[i] << " ";
+        }
+        std::cout << std::endl;
 
-    BigInt sum = x + y;
-    std::cout << "x + y = " << sum << std::endl;
+        vec.erase(5);
+        std::cout << "\nAfter erase at 5: ";
+        for (size_t i = 0; i < vec.size(); ++i) {
+            std::cout << vec[i] << " ";
+        }
+        std::cout << std::endl;
 
-    BigInt product = x * y;
-    std::cout << "x * y = " << product << std::endl;
+        vec.resize(15, 42);
+        std::cout << "\nResized to 15: size=" << vec.size() 
+                  << " capacity=" << vec.capacity() << std::endl;
 
-    if (x < y) {
-        std::cout << "x < y" << std::endl;
+        vec.shrink_to_fit();
+        std::cout << "Shrinked: size=" << vec.size() 
+                  << " capacity=" << vec.capacity() << std::endl;
+
+        std::cout << "\nFront: " << vec.front()
+                  << " Back: " << vec.back()
+                  << " At(5): " << vec.at(5) << std::endl;
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
-
-    if (x > y) {
-        std::cout << "x > y" << std::endl;
-    }
-
-    if (x == y) {
-        std::cout << "x == y" << std::endl;
-    } else {
-        std::cout << "x != y" << std::endl;
-    }
-
-    x += y;
-    std::cout << "x += y: x = " << x << std::endl;
-
-    x *= y;
-    std::cout << "x *= y: x = " << x << std::endl;
 
     return 0;
 }
