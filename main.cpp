@@ -1,183 +1,159 @@
 #include <iostream>
+#include <stdexcept>
 
-class MyVector {
-    int* m_arr;
-    size_t m_size;
-    size_t m_cap;
+using namespace std;
+
+template<typename T, int N, int M>
+class Matrix {
+    static_assert(N <= 3 && M <= 3, "Размеры матрицы должны быть <= 3");
+private:
+    T data[N][M];
 
 public:
-    MyVector() : m_arr(nullptr), m_size(0), m_cap(0) {}
+    Matrix() {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                data[i][j] = T();
+    }
 
-    MyVector(size_t size, int value) : m_size(size), m_cap(size) {
-        m_arr = new int[m_cap];
-        for (size_t i = 0; i < m_size; ++i) {
-            m_arr[i] = value;
+    Matrix(const Matrix& other) {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                data[i][j] = other.data[i][j];
+    }
+
+    Matrix& operator=(const Matrix& other) {
+        if(this != &other)
+            for(int i = 0; i < N; ++i)
+                for(int j = 0; j < M; ++j)
+                    data[i][j] = other.data[i][j];
+        return *this;
+    }
+
+    friend istream& operator>>(istream& in, Matrix& mat) {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                in >> mat.data[i][j];
+        return in;
+    }
+
+    friend ostream& operator<<(ostream& out, const Matrix& mat) {
+        for(int i = 0; i < N; ++i) {
+            for(int j = 0; j < M; ++j)
+                out << mat.data[i][j] << " ";
+            out << endl;
         }
+        return out;
     }
 
-    ~MyVector() {
-        delete[] m_arr;
+    Matrix operator+(const Matrix& other) const {
+        Matrix result;
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                result.data[i][j] = data[i][j] + other.data[i][j];
+        return result;
     }
 
-    void push_back(int value) {
-        if (m_size >= m_cap) {
-            size_t new_cap = m_cap == 0 ? 1 : m_cap * 2;
-
-            int* new_arr = new int[new_cap];
-            
-            for (size_t i = 0; i < m_size; ++i) {
-                new_arr[i] = m_arr[i];
-            }
-            
-            delete[] m_arr;
-            m_arr = new_arr;
-            m_cap = new_cap;
-        }
-        m_arr[m_size++] = value;
+    Matrix& operator+=(const Matrix& other) {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                data[i][j] += other.data[i][j];
+        return *this;
     }
 
-    void resize(size_t newSize, int value = 0) {
-        if (newSize > m_size) {
-            reserve(newSize);
-            for (size_t i = m_size; i < newSize; ++i) {
-                m_arr[i] = value;
-            }
-        }
-        m_size = newSize;
+    template<int K>
+    Matrix<T, N, K> operator*(const Matrix<T, M, K>& other) const {
+        Matrix<T, N, K> result;
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < K; ++j)
+                for(int l = 0; l < M; ++l)
+                    result(i, j) += data[i][l] * other(l, j);
+        return result;
     }
 
-    void reserve(size_t new_cap) {
-        if (new_cap <= m_cap) return;
-        
-        int* new_arr = new int[new_cap];
-        for (size_t i = 0; i < m_size; ++i) {
-            new_arr[i] = m_arr[i];
-        }
-        delete[] m_arr;
-        m_arr = new_arr;
-        m_cap = new_cap;
+    Matrix operator*(const T& scalar) const {
+        Matrix result;
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                result.data[i][j] = data[i][j] * scalar;
+        return result;
     }
 
-    void shrink_to_fit() {
-        if (m_size == m_cap) return;
-        
-        int* new_arr = new int[m_size];
-        for (size_t i = 0; i < m_size; ++i) {
-            new_arr[i] = m_arr[i];
-        }
-        delete[] m_arr;
-        m_arr = new_arr;
-        m_cap = m_size;
+    Matrix& operator*=(const T& scalar) {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                data[i][j] *= scalar;
+        return *this;
     }
 
-    void insert(size_t index, int value) {
-        if (index > m_size) throw std::out_of_range("Index out of range");
-        
-        push_back(value);
-        for (size_t i = m_size - 1; i > index; --i) {
-            m_arr[i] = m_arr[i - 1];
-        }
-        m_arr[index] = value;
+    Matrix& operator++() {
+        for(int i = 0; i < N; ++i)
+            for(int j = 0; j < M; ++j)
+                ++data[i][j];
+        return *this;
     }
 
-    void erase(size_t index) {
-        if (index >= m_size) throw std::out_of_range("Index out of range");
-        
-        for (size_t i = index; i < m_size - 1; ++i) {
-            m_arr[i] = m_arr[i + 1];
-        }
-        --m_size;
+    Matrix operator++(int) {
+        Matrix temp = *this;
+        ++(*this);
+        return temp;
     }
 
-    int& operator[](size_t index) {
-        return m_arr[index];
+    T determinant() const {
+        static_assert(N == M, "Определитель существует только для квадратных матриц");
+        if constexpr(N == 1)
+            return data[0][0];
+        else if constexpr(N == 2)
+            return data[0][0]*data[1][1] - data[0][1]*data[1][0];
+        else if constexpr(N == 3)
+            return data[0][0]*data[1][1]*data[2][2] + 
+                   data[0][1]*data[1][2]*data[2][0] + 
+                   data[0][2]*data[1][0]*data[2][1] - 
+                   data[0][2]*data[1][1]*data[2][0] - 
+                   data[0][1]*data[1][0]*data[2][2] - 
+                   data[0][0]*data[1][2]*data[2][1];
     }
 
-    const int& operator[](size_t index) const {
-        return m_arr[index];
+    T& operator()(int i, int j) {
+        if(i < 0 || i >= N || j < 0 || j >= M)
+            throw out_of_range("Индекс за пределами матрицы");
+        return data[i][j];
     }
 
-    int& at(size_t index) {
-        if (index >= m_size) throw std::out_of_range("Index out of range");
-        return m_arr[index];
+    const T& operator()(int i, int j) const {
+        if(i < 0 || i >= N || j < 0 || j >= M)
+            throw out_of_range("Индекс за пределами матрицы");
+        return data[i][j];
     }
-
-    const int& at(size_t index) const {
-        if (index >= m_size) throw std::out_of_range("Index out of range");
-        return m_arr[index];
-    }
-
-    int& front() {
-        return m_arr[0];
-    }
-
-    const int& front() const {
-        return m_arr[0];
-    }
-
-    int& back() {
-        return m_arr[m_size - 1];
-    }
-
-    const int& back() const {
-        return m_arr[m_size - 1];
-    }
-
-    bool empty() const {
-        return m_size == 0;
-    }
-
-    size_t size() const {
-        return m_size;
-    }
-
-    size_t capacity() const {
-        return m_cap;
-    }
-
-    MyVector(const MyVector&) = delete;
-    MyVector& operator=(const MyVector&) = delete;
 };
 
 int main() {
-    try {
-        MyVector vec;
-        
-        for (int i = 0; i < 10; ++i) {
-            vec.push_back(i);
-            std::cout << "Added " << i << ": size=" << vec.size() 
-                      << " capacity=" << vec.capacity() << std::endl;
-        }
+    Matrix<int, 2, 2> mat1;
+    mat1(0, 0) = 1; mat1(0, 1) = 2;
+    mat1(1, 0) = 3; mat1(1, 1) = 4;
 
-        vec.insert(5, 99);
-        std::cout << "\nAfter insert at 5: ";
-        for (size_t i = 0; i < vec.size(); ++i) {
-            std::cout << vec[i] << " ";
-        }
-        std::cout << std::endl;
+    Matrix<int, 2, 2> mat2;
+    mat2(0, 0) = 5; mat2(0, 1) = 6;
+    mat2(1, 0) = 7; mat2(1, 1) = 8;
 
-        vec.erase(5);
-        std::cout << "\nAfter erase at 5: ";
-        for (size_t i = 0; i < vec.size(); ++i) {
-            std::cout << vec[i] << " ";
-        }
-        std::cout << std::endl;
+    // Сложение
+    auto sum = mat1 + mat2;
+    cout << "Sum:\n" << sum;
 
-        vec.resize(15, 42);
-        std::cout << "\nResized to 15: size=" << vec.size() 
-                  << " capacity=" << vec.capacity() << std::endl;
+    // Прибавление
+    mat1 += mat2;
+    cout << "mat1 after +=:\n" << mat1;
 
-        vec.shrink_to_fit();
-        std::cout << "Shrinked: size=" << vec.size() 
-                  << " capacity=" << vec.capacity() << std::endl;
+    // Умножение матриц
+    auto product = mat1 * mat2;
+    cout << "Product:\n" << product;
 
-        std::cout << "\nFront: " << vec.front()
-                  << " Back: " << vec.back()
-                  << " At(5): " << vec.at(5) << std::endl;
+    // Инкремент
+    ++mat2;
+    cout << "mat2 after ++:\n" << mat2;
 
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
+    // Определитель
+    cout << "Determinant mat1: " << mat1.determinant() << endl;
 
     return 0;
 }
